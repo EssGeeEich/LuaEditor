@@ -23,13 +23,13 @@ namespace LuaEditor { namespace Internal {
 class LuaFunctionHintProposalModel : public TextEditor::IFunctionHintProposalModel
 {
 public:
-	LuaFunctionHintProposalModel(QVector<LuaEngine::LuaInfo> const& functionSymbols);
+	LuaFunctionHintProposalModel(QVector<QString> const& functionSymbols);
 	void reset();
 	int size() const;
 	QString text(int index) const;
 	int activeArgument(QString const& prefix) const;
 private:
-	QVector<LuaEngine::LuaInfo> m_items;
+	QVector<QString> m_items;
 };
 
 } }

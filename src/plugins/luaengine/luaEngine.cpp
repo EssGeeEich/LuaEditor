@@ -23,201 +23,22 @@
 
 namespace LuaEngine {
 
-static LuaInfo::Token fromLexerToken(int luatoken)
-{
-	switch(luatoken)
-	{
-	case '=':
-		return LuaInfo::T_ASSIGN;
-	case ';':
-		return LuaInfo::T_S_SEMICOLON;
-	case ':':
-		return LuaInfo::T_S_COLON;
-	case ',':
-		return LuaInfo::T_S_COMMA;
-	case '.':
-		return LuaInfo::T_S_PERIOD;
-	case '<':
-		return LuaInfo::T_S_LT;
-	case '[':
-		return LuaInfo::T_S_LSQBRACKET;
-	case '{':
-		return LuaInfo::T_S_LBRACKET;
-	case '(':
-		return LuaInfo::T_S_LPARENT;
-	case '>':
-		return LuaInfo::T_S_GT;
-	case ']':
-		return LuaInfo::T_S_RSQBRACKET;
-	case '}':
-		return LuaInfo::T_S_RBRACKET;
-	case ')':
-		return LuaInfo::T_S_RPARENT;
-	case '-':
-		return LuaInfo::T_U_MINUS;
-	case '~':
-		return LuaInfo::T_U_NOT;
-	case '#':
-		return LuaInfo::T_U_LENGTH;
-	case '+':
-		return LuaInfo::T_B_ADD;
-	case '*':
-		return LuaInfo::T_B_MUL;
-	case '%':
-		return LuaInfo::T_B_MOD;
-	case '^':
-		return LuaInfo::T_B_POW;
-	case '/':
-		return LuaInfo::T_B_DIV;
-	case '&':
-		return LuaInfo::T_B_BAND;
-	case '|':
-		return LuaInfo::T_B_BOR;
-	case TK_AND:
-		return LuaInfo::T_AND;
-	case TK_BREAK:
-		return LuaInfo::T_BREAK;
-	case TK_DO:
-		return LuaInfo::T_DO;
-	case TK_ELSE:
-		return LuaInfo::T_ELSE;
-	case TK_ELSEIF:
-		return LuaInfo::T_ELSEIF;
-	case TK_END:
-		return LuaInfo::T_END;
-	case TK_FALSE:
-		return LuaInfo::T_FALSE;
-	case TK_FOR:
-		return LuaInfo::T_FOR;
-	case TK_FUNCTION:
-		return LuaInfo::T_FUNCTION;
-	case TK_GOTO:
-		return LuaInfo::T_GOTO;
-	case TK_IF:
-		return LuaInfo::T_IF;
-	case TK_IN:
-		return LuaInfo::T_IN;
-	case TK_LOCAL:
-		return LuaInfo::T_LOCAL;
-	case TK_NIL:
-		return LuaInfo::T_NIL;
-	case TK_NOT:
-		return LuaInfo::T_NOT;
-	case TK_OR:
-		return LuaInfo::T_OR;
-	case TK_REPEAT:
-		return LuaInfo::T_REPEAT;
-	case TK_RETURN:
-		return LuaInfo::T_RETURN;
-	case TK_THEN:
-		return LuaInfo::T_THEN;
-	case TK_TRUE:
-		return LuaInfo::T_TRUE;
-	case TK_UNTIL:
-		return LuaInfo::T_UNTIL;
-	case TK_WHILE:
-		return LuaInfo::T_WHILE;
-	case TK_IDIV:
-		return LuaInfo::T_IDIV;
-	case TK_CONCAT:
-		return LuaInfo::T_CONCAT;
-	case TK_DOTS:
-		return LuaInfo::T_DOTS;
-	case TK_EQ:
-		return LuaInfo::T_EQ;
-	case TK_GE:
-		return LuaInfo::T_GE;
-	case TK_LE:
-		return LuaInfo::T_LE;
-	case TK_NE:
-		return LuaInfo::T_NE;
-	case TK_SHL:
-		return LuaInfo::T_SHL;
-	case TK_SHR:
-		return LuaInfo::T_SHR;
-	case TK_DBCOLON:
-		return LuaInfo::T_DBCOLON;
-	case TK_EOS:
-		return LuaInfo::T_EOS;
-	case TK_FLT:
-		return LuaInfo::T_FLT;
-	case TK_INT:
-		return LuaInfo::T_INT;
-	case TK_NAME:
-		return LuaInfo::T_NAME;
-	case TK_STRING:
-		return LuaInfo::T_STRING;
-	default:
-		return LuaInfo::T_EOS;
-	}
-}
-
 struct read_string_s {
 	read_string_s(std::string& s)
-		: string(&s), index(0), header_sent(0), footer_sent(0) {}
+		: string(&s), index(0) {}
 	read_string_s()
-		: string(nullptr), index(0), header_sent(0), footer_sent(0) {}
+		: string(nullptr), index(0) {}
 	std::string const* string;
 	std::string::size_type index;
-	bool header_sent;
-	bool footer_sent;
 };
-
-static char const g_header[] = "";
-static char const g_footer[] = "";
 
 static char const* read_string(lua_State*, void* ud, size_t* sz)
 {
 	read_string_s& readdata = *static_cast<read_string_s*>(ud);
-	if(!readdata.header_sent && sizeof(g_header) > 1)
-	{
-		readdata.header_sent = true;
-		*sz = sizeof(g_header)-1;
-		return g_header;
-	}
-	if(readdata.index >= readdata.string->size())
-	{
-		if(!readdata.footer_sent && sizeof(g_footer) > 1)
-		{
-			readdata.footer_sent = true;
-			*sz = sizeof(g_footer)-1;
-			return g_footer;
-		}
-		*sz = 0;
-		return nullptr;
-	}
-	// min(40,512) = 40
-	// min(1231,512) = 512
+	
 	*sz = std::min<int>(readdata.string->size() - readdata.index, 512);
 	std::string::size_type offset = readdata.index; readdata.index += *sz;
 	return readdata.string->c_str() + offset;
-}
-
-static void lexerinfostore(LexState const* state, SemInfo const*, int current, void* pr)
-{
-	ParseResult& result = *static_cast<ParseResult*>(pr);
-	
-	LuaInfo info;
-	if(current != TK_EOS)
-	{
-		if( (info.m_token = fromLexerToken(current) ) != LuaInfo::T_EOS)
-		{
-			info.m_pos.m_begin.m_line = state->linenumber;
-			info.m_pos.m_begin.m_offset = state->sgh_readsz;
-			info.m_pos.m_end.m_line = state->linenumber;
-			info.m_pos.m_end.m_offset = state->sgh_tknsz + state->sgh_readsz;
-			info.m_text = rtxtToken(const_cast<LexState*>(state),current);
-			result.m_luainfos.push_back(std::move(info));
-		}
-		else
-		{
-			result.m_error = std::string("Lua Lexer Converter: Invalid token detected: ") + rtxtToken(const_cast<LexState*>(state),current);
-			result.m_pos.m_begin.m_line = state->linenumber;
-			result.m_pos.m_begin.m_offset = 0;
-			result.m_pos.m_begin.m_line = state->linenumber;
-			result.m_pos.m_begin.m_offset = std::string::npos;
-		}
-	}
 }
 
 static int parseLuai(lua_State* L)
@@ -226,7 +47,8 @@ static int parseLuai(lua_State* L)
 	ParseResult& result = *static_cast<ParseResult*>(lua_touserdata(L,2));
 	read_string_s readdata(contents);
 	
-	lua_setlexerinfocallback(L,lexerinfostore,static_cast<void*>(&result));
+	// Using lua_load instead of luaL_loadstring forces text parsing.
+	// You should not edit a binary file.
 	if(lua_load(L,read_string,&readdata,"","t") != LUA_OK)
 	{
 		size_t size=0; char const* error=lua_tolstring(L,-1,&size);
@@ -302,30 +124,6 @@ static int parseLuai(lua_State* L)
 		}
 	}
 	return 0;
-}
-
-std::vector<LuaInfo*> filter(std::vector<LuaInfo>& collection, const std::vector<LuaInfo::Token>& tokens)
-{
-	std::vector<LuaInfo*> filtered;
-		filtered.reserve(collection.size());
-	for(auto it = collection.begin(); it != collection.end(); ++it)
-	{
-		if(std::find(tokens.begin(),tokens.end(),it->m_token) != tokens.end())
-			filtered.push_back(&*it);
-	}
-	return filtered;
-}
-
-std::vector<LuaInfo*> filter(std::vector<LuaInfo>& collection, const LuaInfo::Token& token)
-{
-	std::vector<LuaInfo*> filtered;
-		filtered.reserve(collection.size());
-	for(auto it = collection.begin(); it != collection.end(); ++it)
-	{
-		if(it->m_token == token)
-			filtered.push_back(&*it);
-	}
-	return filtered;
 }
 
 ParseResult ParseResult::parseLua(std::string contents)

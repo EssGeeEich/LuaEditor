@@ -1,7 +1,6 @@
 This file contains the licenses for the libraries used in the LuaEditor project.
 
-THIS SOFTWARE USES AN EDITED VERSION OF THE "Lua 5.3.1" LIBRARY.
-SEE http://www.lua.org/license.html FOR MORE INFORMATIONS.
+This library uses an EDITED version of LuaEngine.
 
 LuaEditor
 	Copyright (c) 2015 SGH

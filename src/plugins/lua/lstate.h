@@ -148,7 +148,6 @@ typedef struct global_State {
 /*
 ** 'per thread' state
 */
-
 struct lua_State {
   CommonHeader;
   lu_byte status;
@@ -172,9 +171,6 @@ struct lua_State {
   unsigned short nCcalls;  /* number of nested C calls */
   lu_byte hookmask;
   lu_byte allowhook;
-  
-  void* sgh_userdata;
-  lua_LexerInfo sgh_debugcallback;
 };
 
 

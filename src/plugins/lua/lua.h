@@ -123,17 +123,7 @@ typedef int (*lua_Writer) (lua_State *L, const void *p, size_t sz, void *ud);
 */
 typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
 
-//#include "llex.h"
-typedef struct LexState LexState;
-typedef struct TString TString;
-typedef union {
-	lua_Number r;
-	lua_Integer i;
-	TString *ts;
-} SemInfo;
 
-typedef void (*lua_LexerInfo)(LexState const*, SemInfo const*, int, void*);
-void lua_setlexerinfocallback(lua_State* state, lua_LexerInfo lexerinfo, void* ud);
 
 /*
 ** generic extra include file

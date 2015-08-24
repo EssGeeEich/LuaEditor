@@ -15,14 +15,6 @@
 #ifndef LUAENGINE_REQUIREMENTS_H
 #define LUAENGINE_REQUIREMENTS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include "llex.h"
-#include "lauxlib.h"
-#include "lparser.h"
-#ifdef __cplusplus
-}
-#endif
+#include "lua.hpp"
 
 #endif // LUAENGINE_REQUIREMENTS_H

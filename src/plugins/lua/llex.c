@@ -29,7 +29,7 @@
 
 
 
-#define next(ls) ((++(ls->sgh_readsz)), (++(ls->sgh_tknsz)), ls->current = zgetc(ls->z))
+#define next(ls) (ls->current = zgetc(ls->z))
 
 
 
@@ -78,21 +78,6 @@ void luaX_init (lua_State *L) {
   }
 }
 
-const char* rtxtToken(LexState* ls, int token) {
-	switch(token)
-	{
-	case TK_NAME: case TK_STRING:
-	case TK_FLT: case TK_INT:
-		save(ls, '\0');
-		return luaO_pushfstring(ls->L, "%s", luaZ_buffer(ls->buff));
-	default:
-		if(token < FIRST_RESERVED) {
-			lua_assert(token == cast_uchar(token));
-			return luaO_pushfstring(ls->L, "%c", token);
-		}
-		return luaX_tokens[token - FIRST_RESERVED];
-	}
-}
 
 const char *luaX_token2str (LexState *ls, int token) {
   if (token < FIRST_RESERVED) {  /* single-byte symbols? */
@@ -109,7 +94,7 @@ const char *luaX_token2str (LexState *ls, int token) {
 }
 
 
-const char *txtToken (LexState *ls, int token) {
+static const char *txtToken (LexState *ls, int token) {
   switch (token) {
     case TK_NAME: case TK_STRING:
     case TK_FLT: case TK_INT:
@@ -171,7 +156,6 @@ static void inclinenumber (LexState *ls) {
     next(ls);  /* skip '\n\r' or '\r\n' */
   if (++ls->linenumber >= MAX_INT)
     lexerror(ls, "chunk has too many lines", 0);
-  ls->sgh_readsz = 0;
 }
 
 
@@ -185,8 +169,6 @@ void luaX_setinput (lua_State *L, LexState *ls, ZIO *z, TString *source,
   ls->z = z;
   ls->fs = NULL;
   ls->linenumber = 1;
-  ls->sgh_readsz = 0;
-  ls->sgh_tknsz = 0;
   ls->lastline = 1;
   ls->source = source;
   ls->envn = luaS_newliteral(L, LUA_ENV);  /* get env name */
@@ -476,6 +458,7 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
                                    luaZ_bufflen(ls->buff) - 2);
 }
 
+
 static int llex (LexState *ls, SemInfo *seminfo) {
   luaZ_resetbuffer(ls->buff);
   for (;;) {
@@ -486,7 +469,6 @@ static int llex (LexState *ls, SemInfo *seminfo) {
       }
       case ' ': case '\f': case '\t': case '\v': {  /* spaces */
         next(ls);
-		ls->sgh_tknsz = 0;
         break;
       }
       case '-': {  /* '-' or '--' (comment) */
@@ -596,10 +578,6 @@ static int llex (LexState *ls, SemInfo *seminfo) {
   }
 }
 
-static void llog(LexState* ls, SemInfo* seminfo, int token) {
-	if(ls->L->sgh_debugcallback)
-		ls->L->sgh_debugcallback(ls,seminfo,token,ls->L->sgh_userdata);
-}
 
 void luaX_next (LexState *ls) {
   ls->lastline = ls->linenumber;
@@ -609,7 +587,6 @@ void luaX_next (LexState *ls) {
   }
   else
     ls->t.token = llex(ls, &ls->t.seminfo);  /* read next token */
-  llog(ls,&ls->t.seminfo,ls->t.token);
 }
 
 

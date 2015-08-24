@@ -2,7 +2,7 @@ DEFINES += LUAEDITOR_LIBRARY
 
 CONFIG += c++11
 
-# LuaCodeModel files
+# Lua files
 INCLUDEPATH += ./lua
 
 SOURCES += luaeditorplugin.cpp \

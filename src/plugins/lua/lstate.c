@@ -283,11 +283,6 @@ void luaE_freethread (lua_State *L, lua_State *L1) {
   luaM_free(L, l);
 }
 
-LUA_API void lua_setlexerinfocallback(lua_State* state, lua_LexerInfo lexerinfo, void* ud)
-{
-	state->sgh_debugcallback = lexerinfo;
-	state->sgh_userdata = ud;
-}
 
 LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   int i;
@@ -299,8 +294,6 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   g = &l->g;
   L->next = NULL;
   L->tt = LUA_TTHREAD;
-  L->sgh_debugcallback = NULL;
-  L->sgh_userdata = NULL;
   g->currentwhite = bitmask(WHITE0BIT);
   L->marked = luaC_white(g);
   preinit_thread(L, g);

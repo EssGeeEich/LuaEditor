@@ -40,6 +40,13 @@ enum RESERVED {
 #define NUM_RESERVED	(cast(int, TK_WHILE-FIRST_RESERVED+1))
 
 
+typedef union {
+  lua_Number r;
+  lua_Integer i;
+  TString *ts;
+} SemInfo;  /* semantics information */
+
+
 typedef struct Token {
   int token;
   SemInfo seminfo;
@@ -63,13 +70,9 @@ typedef struct LexState {
   TString *source;  /* current source name */
   TString *envn;  /* environment variable name */
   char decpoint;  /* locale decimal point */
-  
-  int sgh_readsz; /* Characters read in this line */
-  int sgh_tknsz; /* Characters read in this token */
 } LexState;
 
 
-LUAI_FUNC const char *rtxtToken (LexState *ls, int token);
 LUAI_FUNC void luaX_init (lua_State *L);
 LUAI_FUNC void luaX_setinput (lua_State *L, LexState *ls, ZIO *z,
                               TString *source, int firstchar);

@@ -17,12 +17,12 @@
 
 namespace LuaEditor { namespace Internal {
 
-LuaFunctionHintProposalModel::LuaFunctionHintProposalModel(const QVector<LuaEngine::LuaInfo> &functionSymbols)
+LuaFunctionHintProposalModel::LuaFunctionHintProposalModel(const QVector<QString> &functionSymbols)
 	: m_items(functionSymbols) {}
 void LuaFunctionHintProposalModel::reset() {}
 int LuaFunctionHintProposalModel::size() const { return m_items.size(); }
 QString LuaFunctionHintProposalModel::text(int index) const
-{ return QString::fromStdString(m_items.at(index).m_text); }
+{ return m_items.at(index); }
 int LuaFunctionHintProposalModel::activeArgument(const QString &prefix) const
 {
 	Scanner scanner(prefix.constData(),prefix.size());
