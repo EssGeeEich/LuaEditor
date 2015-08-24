@@ -1,0 +1,12 @@
+{
+	\"Name\" : \"LuaEditor\",
+	\"Version\" : \"$$QTCREATOR_VERSION\",
+	\"CompatVersion\" : \"$$QTCREATOR_COMPAT_VERSION\",
+	\"Vendor\" : \"SGH\",
+	\"Copyright\" : \"(c) 2015 SGH\",
+	\"License\" : [\"Permission is granted to use, modify and redistribute this software.\"],
+	\"Category\" : \"Lua\",
+	\"Description\" : \"Lua editor component.\",
+	\"Url\" : \"\",
+	$$dependencyList
+}

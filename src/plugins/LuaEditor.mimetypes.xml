@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+	<mime-type type="text/x-luasrc">
+		<comment>Lua file</comment>
+		<sub-class-of type="text/plain"/>
+		<alias type="text/x-lua"/>
+		<glob pattern="*.lua" case-sensitive="false"/>
+	</mime-type>
+</mime-info>
