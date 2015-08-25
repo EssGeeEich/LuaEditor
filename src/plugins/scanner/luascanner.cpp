@@ -414,12 +414,14 @@ void Scanner::TakeBackwardsMember(QTextBlock block, RecursiveClassMembers &targe
 	
 	int pos = str.size()-1;
 	QChar ch = str.at(pos);
-	while((pos > 0) && (ch.isSpace()))
+	while((pos >= 0) && (ch.isSpace()))
 		ch = str.at(--pos);
 	
 	int eos = pos;
-	while((pos > 0) && (ch == QLatin1Char('.') || ch == QLatin1Char('_') || ch.isLetterOrNumber()))
+	while((pos >= 0) && (ch == QLatin1Char('.') || ch == QLatin1Char('_') || ch.isLetterOrNumber()))
 		ch = str.at(--pos);
+	
+	++pos;
 	
 	QString result(str.constData()+pos,eos-pos);
 	

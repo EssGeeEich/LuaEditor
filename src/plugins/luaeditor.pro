@@ -2,6 +2,8 @@ DEFINES += LUAEDITOR_LIBRARY
 
 CONFIG += c++11
 
+# DEFINES += ALLOW_LOGGING
+
 # Lua files
 INCLUDEPATH += ./lua
 

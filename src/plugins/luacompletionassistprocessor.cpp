@@ -115,12 +115,13 @@ TextEditor::IAssistProposal* LuaCompletionAssistProcessor::perform(const TextEdi
 	
 	int pos = interface->position() - 1;
 	QChar ch = interface->characterAt(pos);
-	while(ch.isLetterOrNumber() || ch == QLatin1Char('_'))
+	while(ch.isLetterOrNumber() || ch == QLatin1Char('_') || ch.isSpace())
 	{
 		ch = interface->characterAt(--pos);
 	}
 	
-	bool isFunctionCall = ((ch == QLatin1Char('(')) || ch == QLatin1Char(',')) && pos == interface->position() - 1;
+	
+	bool isFunctionCall = (ch == QLatin1Char('(')) || (ch == QLatin1Char(','));
 	bool isMemberCompletion = (ch == QLatin1Char('.'));
 	
 	QString currentMember;
@@ -159,6 +160,7 @@ TextEditor::IAssistProposal* LuaCompletionAssistProcessor::perform(const TextEdi
 				break;
 			deepest = &(*it);
 		}
+		
 		RecursiveClassMembers* mem = targetIds.matchesChilds(deepest->buildDirectory());
 				
 		if(mem)
@@ -198,20 +200,30 @@ TextEditor::IAssistProposal* LuaCompletionAssistProcessor::perform(const TextEdi
 	
 	QList<TextEditor::AssistProposalItem*> m_completions;
 	
-	for(auto it = globVariables.begin(); it != globVariables.end(); ++it)
-	{
-		PriorityList const& plit = *it;
-		for(auto itb = plit.m_str.begin(); itb != plit.m_str.end(); ++itb)
-		{
-			m_completions << createCompletionItem(*itb, m_varIcon, plit.m_pr);
-		}
-	}
+	QSet<QString> m_usedSuggestions;
+	
 	for(auto it = variables.begin(); it != variables.end(); ++it)
 	{
 		PriorityList const& plit = *it;
 		for(auto itb = plit.m_str.begin(); itb != plit.m_str.end(); ++itb)
 		{
-			m_completions << createCompletionItem(*itb, m_memIcon, plit.m_pr);
+			if(!m_usedSuggestions.contains(*itb))
+			{
+				m_completions << createCompletionItem(*itb, m_memIcon, plit.m_pr);
+				m_usedSuggestions.insert(*itb);
+			}
+		}
+	}
+	for(auto it = globVariables.begin(); it != globVariables.end(); ++it)
+	{
+		PriorityList const& plit = *it;
+		for(auto itb = plit.m_str.begin(); itb != plit.m_str.end(); ++itb)
+		{
+			if(!m_usedSuggestions.contains(*itb))
+			{
+				m_completions << createCompletionItem(*itb, m_varIcon, plit.m_pr);
+				m_usedSuggestions.insert(*itb);
+			}
 		}
 	}
 	for(auto it = keywords.begin(); it != keywords.end(); ++it)
@@ -219,7 +231,11 @@ TextEditor::IAssistProposal* LuaCompletionAssistProcessor::perform(const TextEdi
 		PriorityList const& plit = *it;
 		for(auto itb = plit.m_str.begin(); itb != plit.m_str.end(); ++itb)
 		{
-			m_completions << createCompletionItem(*itb, m_keywordIcon, plit.m_pr);
+			if(!m_usedSuggestions.contains(*itb))
+			{
+				m_completions << createCompletionItem(*itb, m_keywordIcon, plit.m_pr);
+				m_usedSuggestions.insert(*itb);
+			}
 		}
 	}
 	for(auto it = magics.begin(); it != magics.end(); ++it)
@@ -227,7 +243,11 @@ TextEditor::IAssistProposal* LuaCompletionAssistProcessor::perform(const TextEdi
 		PriorityList const& plit = *it;
 		for(auto itb = plit.m_str.begin(); itb != plit.m_str.end(); ++itb)
 		{
-			m_completions << createCompletionItem(*itb, m_functionIcon, plit.m_pr);
+			if(!m_usedSuggestions.contains(*itb))
+			{
+				m_completions << createCompletionItem(*itb, m_functionIcon, plit.m_pr);
+				m_usedSuggestions.insert(*itb);
+			}
 		}
 	}
 	

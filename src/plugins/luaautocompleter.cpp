@@ -41,8 +41,8 @@ bool LuaAutoCompleter::contextAllowsElectricCharacters(const QTextCursor &cursor
 	scanner.setState(Scanner::TakeBackwardsState(cursor.block().previous()));
 	FormatToken tk = scanner.tokenAt(cursor.positionInBlock());
 	
-	return (tk.format() == Format_Comment)
-			|| (tk.format() == Format_String);
+	return !((tk.format() == Format_Comment)
+			|| (tk.format() == Format_String));
 }
 
 bool LuaAutoCompleter::isInComment(const QTextCursor &cursor) const

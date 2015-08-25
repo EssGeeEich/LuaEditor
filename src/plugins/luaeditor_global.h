@@ -23,7 +23,7 @@
 #ifdef ALLOW_LOGGING
 	#define USES_LOGGER() static bool g_isFileOpen = []()->bool{return openLogFile();}(); Q_UNUSED(g_isFileOpen)
 	#define LOG(x) [&](){std::ostringstream oss; {oss << getTabs() << x;} logFile().write(oss.str().c_str(),oss.str().size()); logFile().write("\n",1); qWarning("%s",oss.str().c_str()); logFile().flush();}()
-	#define LOG_SECTION(x) FunctionScopeLogger fsx_dnd(#x); Q_UNUSED(fsx_dnd)
+	#define LOG_SECTION(x) FunctionScopeLogger fsx_dnd(x); Q_UNUSED(fsx_dnd)
 	
 	struct FunctionScopeLogger {
 		FunctionScopeLogger();

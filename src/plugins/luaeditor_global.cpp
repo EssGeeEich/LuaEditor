@@ -13,6 +13,8 @@
 */
 
 #include "luaeditor_global.h"
+#include <QDir>
+#include <QStandardPaths>
 
 #ifdef ALLOW_LOGGING
 static std::string g_tabs;
@@ -49,7 +51,7 @@ bool openLogFile()
 {
 	if(logFile().isOpen())
 		return true;
-	logFile().setFileName(QLatin1String("C:/Users/SGH/Desktop/log.txt"));
+	logFile().setFileName(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)+QLatin1String("/log.txt"));
 	logFile().open(QFile::WriteOnly|QFile::Text);
 	return logFile().isOpen();
 }

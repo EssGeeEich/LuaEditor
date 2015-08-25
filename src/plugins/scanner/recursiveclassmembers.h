@@ -25,7 +25,7 @@ class RecursiveClassMembers {
 	value_type childs;
 	RecursiveClassMembers* mparent;
 	
-	void logRecursive();
+	void logRecursive() const;
 public:
 	typedef value_type::iterator iterator;
 	typedef value_type::const_iterator const_iterator;

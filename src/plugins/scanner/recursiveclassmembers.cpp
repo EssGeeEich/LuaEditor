@@ -38,9 +38,9 @@ QStringList RecursiveClassMembers::buildDirectory() const
 	return result;
 }
 
-void RecursiveClassMembers::logRecursive()
+void RecursiveClassMembers::logRecursive() const
 {
-	LOG_SECTION(logRecursive);
+	LOG_SECTION("logRecursive");
 	LOG(parentName.toStdString());
 	for(auto it = begin(); it != end(); ++it)
 		it->logRecursive();
