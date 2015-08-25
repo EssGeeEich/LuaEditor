@@ -32,6 +32,7 @@ LuaHighlighter::LuaHighlighter()
 				   << TextEditor::C_KEYWORD
 				   << TextEditor::C_OPERATOR
 				   << TextEditor::C_COMMENT
+				   << TextEditor::C_COMMENT
 				   << TextEditor::C_TEXT
 				   << TextEditor::C_VISUAL_WHITESPACE
 				   << TextEditor::C_STRING;

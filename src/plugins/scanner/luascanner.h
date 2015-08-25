@@ -30,12 +30,17 @@ class Scanner
 	Scanner(Scanner const&) =delete;
 	Scanner& operator= (Scanner const&) =delete;
 public:
+	enum TokType {
+		TT_Code					=0x00000000,
+		TT_String				=0x00000001,
+		TT_Comment				=0x00000002
+	};
+
 	enum State {
 		State_Default			=0x00000000,
 		State_String			=0x00000001,
 		State_MultiLineString	=0x00000002,
-		State_MultiLineComment	=0x00000003,
-		State_Default_ClassMem	=0x00000004
+		State_MultiLineComment	=0x00000003
 	};
 	
 	Scanner(QChar const* text, int const length);
@@ -44,7 +49,7 @@ public:
 	int state() const;
 	FormatToken read();
 	QString value(FormatToken const& tk) const;
-	FormatToken tokenAt(int offset);
+	TokType tokenTypeAt(int offset);
 	
 	static void TakeBackwardsMember(QTextBlock block, RecursiveClassMembers& targetIdentifier);
 	static int TakeBackwardsState(QTextBlock block, RecursiveClassMembers* targetIdentifiers =nullptr);

@@ -24,9 +24,11 @@ class LuaAutoCompleter : public TextEditor::AutoCompleter
 public:
 	LuaAutoCompleter();
 	virtual ~LuaAutoCompleter();
+	
 	virtual bool contextAllowsAutoParentheses(const QTextCursor &cursor, const QString &textToInsert) const;
 	virtual bool contextAllowsElectricCharacters(const QTextCursor &cursor) const;
 	virtual bool isInComment(const QTextCursor &cursor) const;
+	virtual bool isInString(const QTextCursor &cursor) const;
 	//virtual QString insertMatchingBrace(const QTextCursor &cursor, const QString &text, QChar la, int *skippedChars) const;
 	//virtual QString insertParagraphSeparator(const QTextCursor &cursor) const;
 };

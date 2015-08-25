@@ -27,6 +27,7 @@ enum Format {
 	Format_MagicAttr,
 	Format_Keyword,
 	Format_Operator,
+	Format_MLComment,
 	Format_Comment,
 	Format_Identifier,
 	Format_Whitespace,

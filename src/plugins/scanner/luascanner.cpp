@@ -107,26 +107,66 @@ QString Scanner::value(FormatToken const& tk) const
 	return m_src.value(tk.begin(), tk.length());
 }
 
-FormatToken Scanner::tokenAt(int offset)
+Scanner::TokType Scanner::tokenTypeAt(int offset)
 {
 	SourceCodeStream old_src = m_src;
 	int old_state = m_state;
 	FormatToken result;
+	TokType type = TT_Code;
 	
 	{
 		m_src.anchorTo(0);
-		while((result = read()).format() != Format_EndOfBlock)
+		
+		result = read();
+		if(result.format() != Format_EndOfBlock)
 		{
-			if( (offset >= static_cast<int>(result.begin()))
-				&& (offset <= static_cast<int>(result.end())) )
+			FormatToken lastValidToken = result;
+			do {
+				lastValidToken = result;
+				if(offset >= static_cast<int>(result.begin()) )
+					break;
+			} while((result = read()).format() != Format_EndOfBlock);
+			if(lastValidToken.format() == Format_Comment)
+				type = TT_Comment;
+			else if(static_cast<int>(lastValidToken.end()) > offset)
+			{
+				switch(lastValidToken.format())
+				{
+				case Format_MLComment:
+					type = TT_Comment;
+					break;
+				case Format_String:
+					type = TT_String;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		else
+		{
+			QChar ch;
+			State s;
+			this->parseState(s,ch);
+			switch(s)
+			{
+			case State_String:
+			case State_MultiLineString:
+				type = TT_String;
 				break;
+			case State_MultiLineComment:
+				type = TT_Comment;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	
 	old_src = m_src;
 	m_state = old_state;
 	
-	return result;
+	return type;
 }
 
 FormatToken Scanner::onDefaultState()
@@ -214,6 +254,7 @@ FormatToken Scanner::readStringLiteral(QChar quoteChar)
 
 FormatToken Scanner::readMultiLineStringLiteral(int literalId)
 {
+	saveState(State_MultiLineString, QChar(static_cast<ushort>(literalId)));
 	for(;;) {
 		QChar ch = m_src.peek();
 		if(ch.isNull())
@@ -350,6 +391,7 @@ FormatToken Scanner::readComment()
 
 FormatToken Scanner::readMultiLineComment(int literalId)
 {
+	saveState(State_MultiLineComment, QChar(static_cast<ushort>(literalId)));
 	for(;;) {
 		QChar ch = m_src.peek();
 		if(ch.isNull())
@@ -374,7 +416,7 @@ FormatToken Scanner::readMultiLineComment(int literalId)
 		}
 		m_src.move();
 	}
-	return FormatToken(Format_String, m_src.anchor(), m_src.length());
+	return FormatToken(Format_MLComment, m_src.anchor(), m_src.length());
 }
 
 FormatToken Scanner::readWhiteSpace()
