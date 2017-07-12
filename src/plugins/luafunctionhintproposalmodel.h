@@ -17,6 +17,7 @@
 #include "luaeditor_global.h"
 #include <texteditor/codeassist/ifunctionhintproposalmodel.h>
 #include "luaengine/luaengine.h"
+#include <QVector>
 
 namespace LuaEditor { namespace Internal {
 

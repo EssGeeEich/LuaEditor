@@ -41,7 +41,6 @@ bool LuaEditorPlugin::initialize(const QStringList &arguments, QString *errorStr
 	Q_UNUSED(arguments)
 	Q_UNUSED(errorString)
 	
-	Utils::MimeDatabase::addMimeTypes(QLatin1String(":/LuaEditor/LuaEditor.mimetypes.xml"));
 	addAutoReleasedObject(new LuaEditorFactory);
 	//addAutoReleasedObject(new LuaCompletionAssistProvider);
 	

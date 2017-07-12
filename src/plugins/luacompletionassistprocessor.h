@@ -16,6 +16,7 @@
 #define LUACOMPLETIONASSISTPROCESSOR_H
 #include "luaeditor_global.h"
 #include <texteditor/codeassist/iassistprocessor.h>
+#include <QIcon>
 
 namespace LuaEditor { namespace Internal {
 class LuaCompletionAssistProcessor : public TextEditor::IAssistProcessor
