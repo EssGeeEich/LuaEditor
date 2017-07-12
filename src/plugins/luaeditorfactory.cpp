@@ -24,6 +24,7 @@
 
 #include <texteditor/textdocument.h>
 #include <texteditor/texteditoractionhandler.h>
+#include <QGuiApplication>
 
 namespace LuaEditor { namespace Internal {
 

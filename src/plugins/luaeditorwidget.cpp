@@ -32,8 +32,8 @@ LuaEditorWidget::LuaEditorWidget()
 {
 	m_updateDocumentTimer.setInterval(UPDATE_DOCUMENT_DEFAULT_INTERVAL);
 	m_updateDocumentTimer.setSingleShot(true);
-	connect(&m_updateDocumentTimer, QTimer::timeout, this, LuaEditorWidget::updateDocument);
-	connect(this, QPlainTextEdit::textChanged, [this](){m_updateDocumentTimer.start();});
+	connect(&m_updateDocumentTimer, &QTimer::timeout, this, &LuaEditorWidget::updateDocument);
+	connect(this, &QPlainTextEdit::textChanged, [this](){m_updateDocumentTimer.start();});
 	
 	m_outlineCombo->setMinimumContentsLength(22);
 	

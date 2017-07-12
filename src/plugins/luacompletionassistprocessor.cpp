@@ -198,7 +198,7 @@ TextEditor::IAssistProposal* LuaCompletionAssistProcessor::perform(const TextEdi
 		keywords.append({g_keyword_fcall,0});
 	}
 	
-	QList<TextEditor::AssistProposalItem*> m_completions;
+	QList<TextEditor::AssistProposalItemInterface*> m_completions;
 	
 	QSet<QString> m_usedSuggestions;
 	
